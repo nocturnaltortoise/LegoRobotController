@@ -14,7 +14,7 @@ public class Robot {
 
 		LightSensor l = new LightSensor(SensorPort.S3);
 
-		for (int i=0;i<100;i++) {
+		while(true){
 			System.out.println(l.getLightPercent());
 			Thread.sleep(INTERVAL);
 		}
