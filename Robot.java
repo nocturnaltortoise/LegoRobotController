@@ -14,12 +14,12 @@ public class Robot {
 
 		LightSensor l = new LightSensor(SensorPort.S3);
 
-		while (true) {
+		for (int i=0;i<100;i++) {
 			System.out.println(l.getLightPercent());
 			Thread.sleep(INTERVAL);
 		}
 
-
+		NXTCommand.close();
 
 	}
 }
