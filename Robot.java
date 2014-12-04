@@ -19,7 +19,7 @@ public class Robot {
 			Thread.sleep(INTERVAL);
 		}
 
-
+		NXTCommand.close();
 
 	}
 }
