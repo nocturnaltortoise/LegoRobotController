@@ -1,6 +1,7 @@
 To Do
 =====
 
+test
 - check for a black line on the floor (using light sensor)
 	- while the sensor detects black
 		set blackDetected true
