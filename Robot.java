@@ -12,10 +12,10 @@ public class Robot {
 		NXTCommand.open();
 		NXTCommand.setVerify(true);
 
-		LightSensor l = new LightSensor(SensorPort.S3);
+		LightSensor floorSensor = new LightSensor(SensorPort.S3);
 
 		while(true){
-			System.out.println(l.getLightPercent());
+			System.out.println(floorSensor.getLightPercent());
 			Thread.sleep(INTERVAL);
 		}
 
