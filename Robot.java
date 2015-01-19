@@ -46,14 +46,26 @@ public class Robot {
 			}
 			if ((lightLevel < LINECUTOFF && lightLevel > SPOTCUTOFF)
 				|| (lightLevel2 < LINECUTOFF && lightLevel > SPOTCUTOFF)) {
-				//System.out.println("On black line");
+				//System.out.println("Both on black line");
 			} else if (lightLevel < SPOTCUTOFF || lightLevel2 < SPOTCUTOFF) {
+				//Sytem.out.println("On Spot");
 				dance();
+			} else if (lightLevel > LINECUTOFF && lightLevel2 < LINECUTOFF) {
+				//Sytem.out.println("Right Sensor on line, left not");
+				lightLevel = floorSensor.getLightPercent();
+				lightLevel2 = floorSensor2.getLightPercent();
+				turnRight();
+			} else if (lightLevel < LINECUTOFF && lightLevel2 > LINECUTOFF) {
+				//Sytem.out.println("Left Sensor on line, right not");
+				lightLevel = floorSensor.getLightPercent();
+				lightLevel2 = floorSensor2.getLightPercent();
+				turnLeft();
 			} else {
-				//System.out.println("Not on black line");
-				while (lightLevel > LINECUTOFF || lightLevel2 > LINECUTOFF) {
+				//System.out.println("Neither on black line");
+				while (!(lightLevel < LINECUTOFF) && !(lightLevel2 < LINECUTOFF)) {
 					lightLevel = floorSensor.getLightPercent();
-					System.out.println(floorSensor.getLightPercent());
+					lightLevel2 = floorSensor2.getLightPercent();
+					//System.out.println(floorSensor.getLightPercent());
 					turnLeft();
 				}
 			}
