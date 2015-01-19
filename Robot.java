@@ -8,10 +8,12 @@ import icommand.nxt.comm.NXTCommand;
 public class Robot {
 	public static void main(String[] args) throws InterruptedException {
 		final int INTERVAL = 10;
-		final int LINECUTOFF = 55;
-		final int SPOTCUTOFF = 45;
+		final int LINECUTOFF = 48;
+		final int LINECUTOFFRIGHT = 
+		final int SPOTCUTOFF = 40;
 		final int DISTANCE = 20;
 		int lightLevel = 0;
+		int lightLevel2 = 0;
 		boolean goalReached = false;
 
 		NXTCommand.open();
@@ -45,11 +47,11 @@ public class Robot {
 				}
 			}
 			if ((lightLevel < LINECUTOFF && lightLevel > SPOTCUTOFF)
-				|| (lightLevel2 < LINECUTOFF && lightLevel > SPOTCUTOFF)) {
+				&& (lightLevel2 < LINECUTOFF && lightLevel2 > SPOTCUTOFF)) {
 				//System.out.println("Both on black line");
 			} else if (lightLevel < SPOTCUTOFF || lightLevel2 < SPOTCUTOFF) {
 				//Sytem.out.println("On Spot");
-				dance();
+				//dance();
 			} else if (lightLevel > LINECUTOFF && lightLevel2 < LINECUTOFF) {
 				//Sytem.out.println("Right Sensor on line, left not");
 				lightLevel = floorSensor.getLightPercent();
@@ -62,7 +64,7 @@ public class Robot {
 				turnLeft();
 			} else {
 				//System.out.println("Neither on black line");
-				while (!(lightLevel < LINECUTOFF) && !(lightLevel2 < LINECUTOFF)) {
+				while (lightLevel > LINECUTOFF && lightLevel2 > LINECUTOFF) {
 					lightLevel = floorSensor.getLightPercent();
 					lightLevel2 = floorSensor2.getLightPercent();
 					//System.out.println(floorSensor.getLightPercent());
@@ -72,30 +74,30 @@ public class Robot {
 			Thread.sleep(INTERVAL);
 		}
 
-		dance();
+		//dance();
 
 	}
 
 	public static void forward() {
 		System.out.println("Forward");
-		//Motor.A.setSpeed(100);
-		//Motor.B.setSpeed(100);
+		Motor.A.setSpeed(100);
+		Motor.B.setSpeed(100);
 		Motor.A.forward();
 		Motor.B.forward();
 	}
 
 	public static void turnLeft() {
 		System.out.println("Turning Left");
-		//Motor.A.setSpeed(50);
-		//Motor.B.setSpeed(50);
+		Motor.A.setSpeed(50);
+		Motor.B.setSpeed(50);
 		Motor.A.forward();
 		Motor.B.backward();
 	}
 
 	public static void turnRight() {
 		System.out.println("Turning Right");
-		//Motor.A.setSpeed(50);
-		//Motor.B.setSpeed(50);
+		Motor.A.setSpeed(50);
+		Motor.B.setSpeed(50);
 		Motor.A.backward();
 		Motor.B.forward();
 
