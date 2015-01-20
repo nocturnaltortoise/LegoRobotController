@@ -12,6 +12,7 @@ public class Robot {
 		final int SPOTCUTOFF = 45;
 		final int DISTANCE = 20;
 		int lightLevel = 0;
+		int lightLevel2 = 0;
 		boolean goalReached = false;
 
 		NXTCommand.open();
