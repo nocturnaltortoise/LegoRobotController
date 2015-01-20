@@ -7,24 +7,19 @@ import icommand.nxt.comm.NXTCommand;
 
 public class Robot {
 
-	static int blackDetectCount = 0;
+	final static int LINECUTOFF = 48;
+	final static int LINECUTOFFRIGHT;
+	final static int SPOTCUTOFF = 40;
+	final static int DISTANCE = 20;
 
 	public static void main(String[] args) throws InterruptedException {
 		final int INTERVAL = 100;
-		final int LINECUTOFF = 48;
-		final int LINECUTOFFRIGHT;
-		final int SPOTCUTOFF = 40;
-		final int DISTANCE = 20;
-
-		// int leftLightLevel = 0;
-		// int rightLightLevel = 0;
-		// boolean goalReached = false;
 
 		NXTCommand.open();
 		NXTCommand.setVerify(true);
 
-		LightSensor leftFloorSensor = new LightSensor(SensorPort.S1);
-		LightSensor rightFloorSensor = new LightSensor(SensorPort.S2);
+		LightSensor leftSensor = new LightSensor(SensorPort.S1);
+		LightSensor rightSensor = new LightSensor(SensorPort.S2);
 		UltrasonicSensor distSensor = new UltrasonicSensor(SensorPort.S4);
 
 		// 33 - Black Spot
@@ -34,29 +29,35 @@ public class Robot {
 		// Motor A - Right Wheel
 		// Motor B - Left Wheel
 
-		// while(!blackLineDetected(leftFloorSensor.getLightPercent()) && !blackLineDetected(rightFloorSensor.getLightPercent()){
-		// 	if(blackDetectCount == 0){
-		// 		forward();
-		// 	}else{
-		// 		turnLeft();
-		// 	}
-		// }
 
+		while(!lineDetected(getLight(leftSensor)) && !lineDetected(getLight(rightSensor))) {
+			forward();
+		}		
 
-		// while(blackLineDetected(leftFloorSensor.getLightPercent()) || blackLineDetected(rightFloorSensor.getLightPercent())){
+		turnLeft();
 
+		while (true) {
 
-		// 	if(blackLineDetected(leftFloorSensor.getLightPercent()) && !blackLineDetected(rightFloorSensor.getLightPercent())){
-		// 		turnLeft();
-		// 	}else if(!blackLineDetected(leftFloorSensor.getLightPercent()) && blackLineDetected(rightFloorSensor.getLightPercent())){
-		// 		turnRight();
-		// 	}
+			if (lineDetected(getLight(leftSensor)) && !lineDetected(getLight(rightSensor))) { // Turn Left
+				turnLeft();
+			} else if (!lineDetected(getLight(leftSensor)) && lineDetected(getLight(rightSensor))) { // Turn Right
+				turnRight();
+			} else if (obstacleDetected(distSensor) && lineDetected(getLight(leftSensor)) && lineDetected(getLight(rightSensor))) { // Turn at obstacle and both sensor on line
+				turnRight();
+			} else if (lineDetected(getLight(leftSensor)) && lineDetected(getLight(rightSensor))) { // Found Spot
+				System.out.println("Spot");
+			} else { // On line, moving forward
+				forward();
+			}
 
-		// }
+			Thread.sleep(INTERVAL);
+
+		}
+
 
 		while(true){
-			System.out.println("Left Sensor: " + leftFloorSensor.getLightPercent());
-			System.out.println("Right Sensor: " + rightFloorSensor.getLightPercent());
+			System.out.println("Left Sensor: " + leftSensor.getLightPercent());
+			System.out.println("Right Sensor: " + rightSensor.getLightPercent());
 
 			Thread.sleep(INTERVAL);
 		}
@@ -108,13 +109,27 @@ public class Robot {
 		// }
 	}
 
-	private static boolean blackLineDetected(int lightPercent){
+	private static int getLight(LightSensor sensor) {
+
+		return sensor.getLightPercent();
+
+	}
+
+	private static boolean lineDetected(int lightPercent){
 
 		if(lightPercent < LINECUTOFF){
 			blackDetectCount++;
 			return true;
 		}
 		
+	}
+
+	private static boolean obstacleDetected(UltrasonicSensor sensor) {
+
+		if (sensor.getDistance() < DISTANCE) {
+			return true
+		}
+
 	}
 
 	private static void forward() {
