@@ -1,33 +1,12 @@
 To Do
 =====
 
-test
-- check for a black line on the floor (using light sensor)
-	- while the sensor detects black
-		set blackDetected true
-		if sensor doesn't detect black
-			set blackDetected false
-	- while the sensor doesn't detect black
-		
-		
-
-- check for obstacles in front of the robot (using ultrasonic sensor)
-	-while the obstacle is detected
-		set obstacleDetected true
-		- if !obstacleDetected
-			set obstacleDetected false
-
-- while obstacleDetected
-		turn left
-
-- while blackDetected
-		move forwards
-		turn left
-			scan
-
-
-
-- default: move forwards
-
-- when sensor detects black, turn left, scan - repeat until black detected
+~~-Get basic line detection working with one sensor.~~
+- Get basic line detection working with two sensors.
+- Get Robot to adjust when one sensor is off the line and one sensor is on the line.
+~~-Get Robot to dance when either sensor detects spot.~~
+~~-Turn when facing an obstacle with one sensor.~~
+- Turn when facing an obstacle with two sensors. 
+- Sort out logic code!
+- Other refuctoring. 
 	
