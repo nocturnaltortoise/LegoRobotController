@@ -8,7 +8,6 @@ import icommand.nxt.comm.NXTCommand;
 public class Robot {
 
 	final static int LINECUTOFF = 48;
-	final static int LINECUTOFFRIGHT;
 	final static int SPOTCUTOFF = 40;
 	final static int DISTANCE = 20;
 
@@ -46,6 +45,7 @@ public class Robot {
 				turnRight();
 			} else if (lineDetected(getLight(leftSensor)) && lineDetected(getLight(rightSensor))) { // Found Spot
 				System.out.println("Spot");
+				//dance();
 			} else { // On line, moving forward
 				forward();
 			}
@@ -55,58 +55,14 @@ public class Robot {
 		}
 
 
-		while(true){
-			System.out.println("Left Sensor: " + leftSensor.getLightPercent());
-			System.out.println("Right Sensor: " + rightSensor.getLightPercent());
+		// while(true){
+		// 	System.out.println("Left Sensor: " + leftSensor.getLightPercent());
+		// 	System.out.println("Right Sensor: " + rightSensor.getLightPercent());
 
-			Thread.sleep(INTERVAL);
-		}
-		
-
-
-		// while (!goalReached) {
-		// 	lightLevel = floorSensor.getLightPercent();
-		// 	lightLevel2 = floorSensor2.getLightPercent();
-		// 	System.out.println("Light Sensor 1: " + lightLevel);
-		// 	System.out.println("Light Sensor 2: " + lightLevel2);
-
-		// 	forward();
-
-		// 	if (distSensor.getDistance() < DISTANCE) {
-		// 		System.out.println("Object infront");
-		// 		while (lightLevel > LINECUTOFF) { 
-		// 			lightLevel = floorSensor.getLightPercent();
-		// 			System.out.println(floorSensor.getLightPercent());
-		// 			turnLeft();
-		// 		}
-		// 	}
-		// 	if ((lightLevel < LINECUTOFF && lightLevel > SPOTCUTOFF)
-		// 		&& (lightLevel2 < LINECUTOFF && lightLevel2 > SPOTCUTOFF)) {
-		// 		//System.out.println("Both on black line");
-		// 	} else if (lightLevel < SPOTCUTOFF || lightLevel2 < SPOTCUTOFF) {
-		// 		//Sytem.out.println("On Spot");
-		// 		//dance();
-		// 	} else if (lightLevel > LINECUTOFF && lightLevel2 < LINECUTOFF) {
-		// 		//Sytem.out.println("Right Sensor on line, left not");
-		// 		lightLevel = floorSensor.getLightPercent();
-		// 		lightLevel2 = floorSensor2.getLightPercent();
-		// 		turnRight();
-		// 	} else if (lightLevel < LINECUTOFF && lightLevel2 > LINECUTOFF) {
-		// 		//Sytem.out.println("Left Sensor on line, right not");
-		// 		lightLevel = floorSensor.getLightPercent();
-		// 		lightLevel2 = floorSensor2.getLightPercent();
-		// 		turnLeft();
-		// } else {
-		// 		//System.out.println("Neither on black line");
-		// 		while (lightLevel > LINECUTOFF && lightLevel2 > LINECUTOFF) {
-		// 			lightLevel = floorSensor.getLightPercent();
-		// 			lightLevel2 = floorSensor2.getLightPercent();
-		// 			//System.out.println(floorSensor.getLightPercent());
-		// 			turnLeft();
-		// 		}
-		// 	}
 		// 	Thread.sleep(INTERVAL);
 		// }
+		
+
 	}
 
 	private static int getLight(LightSensor sensor) {
@@ -164,5 +120,20 @@ public class Robot {
 	}
 
 	private static void dance() {
+		spin();
+		playSong();
 	}
+
+	private static void spin() {
+		System.out.println("Spinning");
+		Motor.A.setSpeed(150);
+		Motor.B.setSpeed(150);
+		Motor.A.forward();
+		Motor.B.backward();
+	}
+
+	private static void playSong() {
+		
+	}
+
 }
