@@ -7,13 +7,16 @@ import icommand.nxt.comm.NXTCommand;
 
 public class Robot {
 
+	//Light levels of a black line for each sensor.
 	final static int LEFT_LINE_CUTOFF = 550;
 	final static int RIGHT_LINE_CUTOFF = 480;
 
+	//Distances for obstacle detection.
 	final static int CLOSE_OBSTACLE_DISTANCE = 15;
 	final static int OBSTACLE_DISTANCE = 30;
 
-	final static int FORWARDP_SPEED = 100;
+	//Robot speed settings.
+	final static int FORWARD_SPEED = 100;
 	final static int NORMAL_TURN_SPEED = 25;
 	final static int HARD_TURN_SPEED = 220;
 
@@ -31,43 +34,43 @@ public class Robot {
 		rightSensor = new LightSensor(SensorPort.S1);
 		UltrasonicSensor distSensor = new UltrasonicSensor(SensorPort.S4);
 
-		// 33 - Black Spot
-		// 50 - Black Line
-		// 60 - Floor
-
 		// Motor C - Right Wheel
 		// Motor B - Left Wheel
 
-
+		//Move forwards until the first line is found.
 		while(!lineDetected(leftSensor) && !lineDetected(rightSensor)) {
 			//System.out.println("Left: " + getLight(leftSensor));
 			//System.out.println("Right: " + getLight(rightSensor));
 			forward();
 		}		
 
+		//once the first line is found, sleep and then turn to the left to follow the line.
 		Thread.sleep(650);
-
 		hardTurnLeft();
 
+		/*
+		* Until the robot reaches the spot, follow the line (adjusting left if the left sensor detects the line, 
+		* and right if the right sensor does the same) and hard turn at obstacles. Once the spot is found, set a flag to terminate
+		* the loop, and call the dance method. 
+		*/
 		while (!reachedSpot) {
 			System.out.println("Left: " + getLight(leftSensor));
 			System.out.println("Right: " + getLight(rightSensor));
-
 			System.out.println("Distance: " + distSensor.getDistance());
 
-			if (lineDetected(leftSensor) && !lineDetected(rightSensor) && !obstacleDetected(distSensor)) { // Turn Left
+			if (lineDetected(leftSensor) && !lineDetected(rightSensor) && !obstacleDetected(distSensor)) {
 				turnLeft();
-			} else if (!lineDetected(leftSensor) && lineDetected(rightSensor) && !obstacleDetected(distSensor)) { // Turn Right
+			} else if (!lineDetected(leftSensor) && lineDetected(rightSensor) && !obstacleDetected(distSensor)) {
 				turnRight();
-			} else if (obstacleDetectedClose(distSensor)) { // Turn at obstacle and both sensor on line
+			} else if (obstacleDetectedClose(distSensor)) {
 				hardTurnRight();
 				// Thread.sleep(500);
 				// forward();
-			} else if (lineDetected(leftSensor) && lineDetected(rightSensor) && !obstacleDetected(distSensor)) { // Found Spot
+			} else if (lineDetected(leftSensor) && lineDetected(rightSensor) && !obstacleDetected(distSensor)) {
 				System.out.println("Spot");
 				reachedSpot = true;
 				dance();
-			} else { // On line, moving forward
+			} else {
 				forward();
 			}	
 
@@ -149,8 +152,8 @@ public class Robot {
 	*/
 	public static void forward() {
 		System.out.println("Forward");
-		Motor.B.setSpeed(FORWARDP_SPEED);
-		Motor.C.setSpeed(FORWARDP_SPEED);
+		Motor.B.setSpeed(FORWARD_SPEED);
+		Motor.C.setSpeed(FORWARD_SPEED);
 		Motor.B.forward();
 		Motor.C.forward();
 	}
