@@ -7,19 +7,28 @@ import icommand.nxt.comm.NXTCommand;
 
 public class Robot {
 
-	final static int LEFTLINECUTOFF = 600;
-	final static int RIGHTLINECUTOFF = 510;
-	final static int SPOTCUTOFF = 0;
-	final static int DISTANCE = 20;
-	static LightSensor leftSensor = new LightSensor(SensorPort.S1);
-	static LightSensor rightSensor = new LightSensor(SensorPort.S2);
+	final static int LEFT_LINE_CUTOFF = 550;
+	final static int RIGHT_LINE_CUTOFF = 480;
+
+	final static int CLOSE_OBSTACLE_DISTANCE = 15;
+	final static int OBSTACLE_DISTANCE = 30;
+
+	final static int FORWARDP_SPEED = 100;
+	final static int NORMAL_TURN_SPEED = 25;
+	final static int HARD_TURN_SPEED = 220;
+
+	static LightSensor leftSensor;
+	static LightSensor rightSensor;
 
 	public static void main(String[] args) throws InterruptedException {
-		final int INTERVAL = 10;
+		final int INTERVAL = 0;
+		boolean reachedSpot = false;
 
 		NXTCommand.open();
 		NXTCommand.setVerify(true);
 		
+		leftSensor = new LightSensor(SensorPort.S3);
+		rightSensor = new LightSensor(SensorPort.S1);
 		UltrasonicSensor distSensor = new UltrasonicSensor(SensorPort.S4);
 
 		// 33 - Black Spot
@@ -31,145 +40,208 @@ public class Robot {
 
 
 		while(!lineDetected(leftSensor) && !lineDetected(rightSensor)) {
-			System.out.println("Left: " + getLight(leftSensor));
-			System.out.println("Right: " + getLight(rightSensor));
+			//System.out.println("Left: " + getLight(leftSensor));
+			//System.out.println("Right: " + getLight(rightSensor));
 			forward();
 		}		
 
+		Thread.sleep(650);
+
 		hardTurnLeft();
 
-		while (true) {
-
+		while (!reachedSpot) {
 			System.out.println("Left: " + getLight(leftSensor));
 			System.out.println("Right: " + getLight(rightSensor));
 
-			if (lineDetected(leftSensor) && !lineDetected(rightSensor)) { // Turn Left
+			System.out.println("Distance: " + distSensor.getDistance());
+
+			if (lineDetected(leftSensor) && !lineDetected(rightSensor) && !obstacleDetected(distSensor)) { // Turn Left
 				turnLeft();
-			} else if (!lineDetected(leftSensor) && lineDetected(rightSensor)) { // Turn Right
+			} else if (!lineDetected(leftSensor) && lineDetected(rightSensor) && !obstacleDetected(distSensor)) { // Turn Right
 				turnRight();
-			} else if (obstacleDetected(distSensor) && (lineDetected(leftSensor) || lineDetected(rightSensor))) { // Turn at obstacle and both sensor on line
+			} else if (obstacleDetectedClose(distSensor)) { // Turn at obstacle and both sensor on line
 				hardTurnRight();
+				// Thread.sleep(500);
+				// forward();
 			} else if (lineDetected(leftSensor) && lineDetected(rightSensor) && !obstacleDetected(distSensor)) { // Found Spot
 				System.out.println("Spot");
-				stop();
-				//dance();
+				reachedSpot = true;
+				dance();
 			} else { // On line, moving forward
 				forward();
-			}
+			}	
 
 			Thread.sleep(INTERVAL);
-
 		}
 
-
+		//  // && (lineDetected(leftSensor) || lineDetected(rightSensor))
 		// while(true){
-		// 	System.out.println("Left Sensor: " + leftSensor.getLightValue());
-		// 	System.out.println("Right Sensor: " + rightSensor.getLightValue());
+		// System.out.println("Distance: " + distSensor.getDistance());
+		// // 	System.out.println("Left Sensor: " + leftSensor.getLightValue());
+		// // 	System.out.println("Right Sensor: " + rightSensor.getLightValue());
 
-		// 	Thread.sleep(INTERVAL);
+		//  	Thread.sleep(INTERVAL);
 		// }
 		
-
+		//NXTCommand.close();
 	}
 
-	private static int getLight(LightSensor sensor) {
-
+	/**
+	* Accessor, gets the light value from the Sensor.
+	* @param sensor LightSensor Sensor to get the light values from.
+	* @return int Light value for a sensor.
+	*/
+	public static int getLight(LightSensor sensor) {
 		return sensor.getLightValue();
-
 	}
 
-	private static boolean lineDetected(LightSensor sensor){
-
+	/**
+	* Detects a line under a sensor.
+	* @param sensor LightSensor The sensor which may be over the line.
+	* @return boolean Whether a line has been detected. 
+	*/
+	public static boolean lineDetected(LightSensor sensor){
 		int lightValue = getLight(sensor);
 
-		if (sensor.equals(leftSensor)) {
-			if (lightValue < LEFTLINECUTOFF) {
+		if (sensor.equals(leftSensor)) { // left sensor
+			if (lightValue < LEFT_LINE_CUTOFF) {
 				return true;
 			} else {
 				return false;
 			}
-		} else {
-			if (lightValue < RIGHTLINECUTOFF) {
+		} else { // right sensor
+			if (lightValue < RIGHT_LINE_CUTOFF) {
 				return true;
 			} else {
 				return false;
 			}
 		}
-
-
-		
 	}
 
-	private static boolean obstacleDetected(UltrasonicSensor sensor) {
-
-		if (sensor.getDistance() < DISTANCE) {
+	/**
+	* Detects obstacles.
+	* @param sensor UltrasonicSensor The ultrasonic sensor which may have detected an object.
+	* @return boolean Whether an obstacle has been detected. 
+	*/
+	public static boolean obstacleDetected(UltrasonicSensor sensor) {
+		if (sensor.getDistance() < OBSTALCE_DISTNACE) {
 			return true;
 		}else{
 			return false;
 		}
-
 	}
 
-	private static void forward() {
+	/**
+	* Detects very close obstacles.
+	* @param sensor UltrasonicSensor The ultrasonic sensor which may have detected an object.
+	* @return boolean Whether an obstacle has been detected. 
+	*/
+	public static boolean obstacleDetectedClose(UltrasonicSensor sensor) {
+		if (sensor.getDistance() < CLOSE_OBSTACLE_DISTANCE) {
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	/**
+	* Sets the Robot's motors to move forwards.
+	*/
+	public static void forward() {
 		System.out.println("Forward");
-		Motor.B.setSpeed(100);
-		Motor.C.setSpeed(100);
+		Motor.B.setSpeed(FORWARDP_SPEED);
+		Motor.C.setSpeed(FORWARDP_SPEED);
 		Motor.B.forward();
 		Motor.C.forward();
 	}
 
-	private static void turnLeft() {
+	/**
+	* Sets the robot's motors to turn left.
+	*/
+	public static void turnLeft() {
 		System.out.println("Turning Left");
-		Motor.C.setSpeed(40);
-		Motor.B.setSpeed(40);
+		Motor.C.setSpeed(NORMAL_TURN_SPEED);
+		Motor.B.setSpeed(NORMAL_TURN_SPEED);
 		Motor.C.forward();
 		Motor.B.backward();
 	}
 
-	private static void turnRight() {
+	/**
+	* Sets the robot's motors to turn right.
+	*/
+	public static void turnRight() {
 		System.out.println("Turning Right");
-		Motor.C.setSpeed(40);
-		Motor.B.setSpeed(40);
+		Motor.C.setSpeed(NORMAL_TURN_SPEED);
+		Motor.B.setSpeed(NORMAL_TURN_SPEED);
 		Motor.C.backward();
 		Motor.B.forward();
 	}
 
-	private static void  hardTurnLeft() {
+	/**
+	* Sets the robot's motors to turn hard to the left.
+	*/
+	public static void  hardTurnLeft() {
 		System.out.println("Hard Turning Left");
-		Motor.C.setSpeed(200);
-		Motor.B.setSpeed(200);
+		Motor.C.setSpeed(HARD_TURN_SPEED);
+		Motor.B.setSpeed(HARD_TURN_SPEED);
 		Motor.C.forward();
 		Motor.B.backward();
 	}
 
-	private static void hardTurnRight() {
+	/**
+	* Sets the robot's motors to turn hard to the right.
+	*/
+	public static void hardTurnRight() {
 		System.out.println("Hard Turning Right");
-		Motor.C.setSpeed(200);
-		Motor.B.setSpeed(200);
+		Motor.C.setSpeed(HARD_TURN_SPEED);
+		Motor.B.setSpeed(HARD_TURN_SPEED);
 		Motor.C.backward();
 		Motor.B.forward();
 	}
-	private static void stop() {
+
+	/**
+	* Sets the robot's motors to stop.
+	*/
+	public static void stop() {
 		System.out.println("Stopped");
 		Motor.C.stop();
 		Motor.B.stop();
 	}
 
-	private static void dance() {
+	/**
+	* Sets the robot's motors to dance on the spot, and play music.
+	* @throws InterruptedException Occurs if sleep is interrupted.
+	*/
+	public static void dance() throws InterruptedException {
+		forward();
+		Thread.sleep(2000);
 		spin();
 		playSong();
+		stop();
 	}
 
-	private static void spin() {
+	/**
+	* Sets the robot's motors to spin on the spot.
+	*/
+	public static void spin() {
 		System.out.println("Spinning");
-		Motor.C.setSpeed(150);
-		Motor.B.setSpeed(150);
+		Motor.C.setSpeed(HARD_TURN_SPEED);
+		Motor.B.setSpeed(HARD_TURN_SPEED);
 		Motor.C.forward();
 		Motor.B.backward();
 	}
 
-	private static void playSong() {
-		
+	/**
+	* Makes the robot play music.
+	* @throws InterruptedException Occurs if sleep is interrupted.
+	*/
+	public static void playSong() throws InterruptedException {
+		System.out.println("Playing Song");
+		int[] notes = {587,587,587,587,466,523,587,523,587};
+		for (int note : notes) {
+			Sound.playTone(note, 400);
+			Thread.sleep(450);
+		}
 	}
 
 }
