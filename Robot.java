@@ -33,8 +33,6 @@ public class Robot {
 		rightSensor = new LightSensor(SensorPort.S1);
 		UltrasonicSensor distSensor = new UltrasonicSensor(SensorPort.S4);
 
-
-
 		//Move forwards until the first line is found.
 		while(!lineDetected(leftSensor) && !lineDetected(rightSensor)) {
 			forward();
@@ -46,7 +44,8 @@ public class Robot {
 
 		/*
 		* Until the robot reaches the spot, follow the line (adjusting left if the left sensor detects the line, 
-		* and right if the right sensor does the same) and hard turn at obstacles. Once the spot is found, set a flag to terminate
+		* and right if the right sensor does the same) and hard turn at obstacles. 
+		* Once the spot is found, set a flag to terminate
 		* the loop, and call the dance method. 
 		*/
 		while (!reachedSpot) {
@@ -60,8 +59,6 @@ public class Robot {
 				turnRight();
 			} else if (obstacleDetectedClose(distSensor)) {
 				hardTurnRight();
-				// Thread.sleep(500);
-				// forward();
 			} else if (lineDetected(leftSensor) && lineDetected(rightSensor) && !obstacleDetected(distSensor)) {
 				System.out.println("Spot");
 				reachedSpot = true;
