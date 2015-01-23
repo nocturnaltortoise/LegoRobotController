@@ -17,7 +17,7 @@ public class Robot {
 
 	//Robot speed settings.
 	final static int FORWARD_SPEED = 100;
-	final static int NORMAL_TURN_SPEED = 30;
+	final static int NORMAL_TURN_SPEED = 25;
 	final static int HARD_TURN_SPEED = 200;
 
 	static LightSensor leftSensor;
@@ -39,7 +39,7 @@ public class Robot {
 		}		
 
 		//once the first line is found, sleep and then turn to the left to follow the line.
-		Thread.sleep(700);
+		Thread.sleep(750);
 		hardTurnLeft();
 
 		/*
@@ -68,7 +68,7 @@ public class Robot {
 			}
 
 		}
-		
+
 		NXTCommand.close();
 	}
 
