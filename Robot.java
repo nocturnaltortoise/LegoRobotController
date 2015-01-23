@@ -17,14 +17,13 @@ public class Robot {
 
 	//Robot speed settings.
 	final static int FORWARD_SPEED = 100;
-	final static int NORMAL_TURN_SPEED = 30;
+	final static int NORMAL_TURN_SPEED = 25;
 	final static int HARD_TURN_SPEED = 200;
 
 	static LightSensor leftSensor;
 	static LightSensor rightSensor;
 
 	public static void main(String[] args) throws InterruptedException {
-		final int INTERVAL = 0;
 		boolean reachedSpot = false;
 
 		NXTCommand.open();
@@ -34,18 +33,14 @@ public class Robot {
 		rightSensor = new LightSensor(SensorPort.S1);
 		UltrasonicSensor distSensor = new UltrasonicSensor(SensorPort.S4);
 
-		// Motor C - Right Wheel
-		// Motor B - Left Wheel
 
 		//Move forwards until the first line is found.
 		while(!lineDetected(leftSensor) && !lineDetected(rightSensor)) {
-			//System.out.println("Left: " + getLight(leftSensor));
-			//System.out.println("Right: " + getLight(rightSensor));
 			forward();
 		}		
 
 		//once the first line is found, sleep and then turn to the left to follow the line.
-		Thread.sleep(700);
+		Thread.sleep(750);
 		hardTurnLeft();
 
 		/*
@@ -77,16 +72,7 @@ public class Robot {
 			Thread.sleep(INTERVAL);
 		}
 
-		//  // && (lineDetected(leftSensor) || lineDetected(rightSensor))
-		// while(true){
-		// System.out.println("Distance: " + distSensor.getDistance());
-		// // 	System.out.println("Left Sensor: " + leftSensor.getLightValue());
-		// // 	System.out.println("Right Sensor: " + rightSensor.getLightValue());
-
-		//  	Thread.sleep(INTERVAL);
-		// }
-		
-		//NXTCommand.close();
+		NXTCommand.close();
 	}
 
 	/**
@@ -146,6 +132,11 @@ public class Robot {
 			return false;
 		}
 	}
+
+	/*
+	* Motor C - Right Wheel
+	* Motor B - Left Wheel
+	*/
 
 	/**
 	* Sets the Robot's motors to move forwards.
