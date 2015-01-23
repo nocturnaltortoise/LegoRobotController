@@ -33,7 +33,6 @@ public class Robot {
 		rightSensor = new LightSensor(SensorPort.S1);
 		UltrasonicSensor distSensor = new UltrasonicSensor(SensorPort.S4);
 
-
 		//Move forwards until the first line is found.
 		while(!lineDetected(leftSensor) && !lineDetected(rightSensor)) {
 			forward();
@@ -69,7 +68,6 @@ public class Robot {
 				forward();
 			}
 
-			Thread.sleep(INTERVAL);
 		}
 
 		NXTCommand.close();
