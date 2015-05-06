@@ -1,5 +1,3 @@
-javaassignment3
+Lego Robot Controller
 ===============
-Java Assignment 3 with Alex Adams and Simon Turner.
-Using the LEGO Mindstorm.
-
+Written for the Lego Mindstorm robot using the NXT library, this program instructs a robot to follow a series of black tape lines, and to avoid obstacles. 
